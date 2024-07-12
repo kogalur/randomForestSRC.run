@@ -1,0 +1,12 @@
+Package: randomForestSRC.run
+Title: Run RandomForestSRC 
+Version: 0.0.2
+Author: Hemant Ishwaran <hemant.ishwaran@gmail.com>, Min Lu <m.lu6@umiami.edu>
+Description: What the package does (one paragraph).
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1
+Imports: randomForestSRC, rlang, riskRegression, ggplot2, survival, gridExtra, cowplot, patchwork, tidyverse, grid, gridExtra, pROC, PRROC
+Suggests: mlbench
+License: GPL (>=3)
+URL: https://www.randomforestsrc.org/ https://ishwaran.org/
