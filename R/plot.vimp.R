@@ -13,13 +13,14 @@
 #' @export
 
 plot.vimp <- function(x, standardize = TRUE, trim = 0, cex = 1,
-        xlab = "Importance", ylab = "", title = TRUE, show.plots = TRUE) {
+        xlab = "Importance", ylab = "", title = TRUE, show.plots = TRUE, ...) {
 
   ## coherence check
   if (sum(inherits(x, c("rfsrc", "grow"), TRUE) == c(1, 2)) != 2) {
     stop("This function only works for objects of class `(rfsrc, grow)'")
   }
 
+  
   ## check that vimp is available
   if (x$family != "surv-CR") {
     if (x$family != "class") {
@@ -51,33 +52,59 @@ plot.vimp <- function(x, standardize = TRUE, trim = 0, cex = 1,
     vmp <- vimp.trim(vmp, trim = trim, standardize = standardize)
   }
   
+  ## process title
+  if (is.character(title)) {
+    title.lab <- title
+    title <- TRUE
+  }
+  else {
+    if (!(x$family == "regr+" | x$family == "class+" | x$family == "mix+")) {
+      title.lab <- "Variable Importance"
+    }
+    else {
+      title.lab <- ""
+    }
+    title <- TRUE
+  }
+
+
   ## family specific processing
   if (x$family == "regr" | x$family == "surv") {
     g  <- mybar.vimp(rownames(vmp), vmp[, 1], xlab, ylab)
     g <- theme.vimp(g, cex * 1)
     if (title) {
-      g <- g + labs(title = "Variable Importance")
+      g <- g + labs(title = title.lab)
     }
   }
   else if (x$family == "class") {
-    J <- length(sort(unique(x$yvar)))
-    g <- lapply(1:ncol(vmp), function(j) {
-      gg  <- mybar.vimp(rownames(vmp), vmp[, j], xlab, ylab)
-      if (title) {
-        gg <- gg + labs(title = paste("Variable Importance:", colnames(vmp)[j])) 
-      }
+    rfq <- x$forest$rfq
+    if (!rfq) {## standard classification
+      J <- length(sort(unique(x$yvar)))
+      g <- lapply(1:ncol(vmp), function(j) {
+        gg  <- mybar.vimp(rownames(vmp), vmp[, j], xlab, ylab)
+        if (title) {
+          gg <- gg + labs(title = paste0(title.lab, ": ", colnames(vmp)[j])) 
+        }
       if (J < 5) {
         theme.vimp(gg, cex * 1)
       }
       else {
         theme.vimp(gg, cex * .6)
       }
-    })
-    if (J < 5) {
-      g <- wrap_plots(g, ncol = length(g))
+      })
+      if (J < 5) {
+        g <- wrap_plots(g, ncol = length(g))
+      }
+      else {
+        g <- wrap_plots(g, ncol = min(length(g), 4))
+      }
     }
-    else {
-      g <- wrap_plots(g, ncol = min(length(g), 4))
+    else {#class imbalanced
+      g  <- mybar.vimp(rownames(vmp), vmp[, 1], xlab, ylab)
+      if (title) {
+        g <- g + labs(title = paste0(title.lab))
+      }
+      g <- theme.vimp(g, cex * 1)
     }
   }
   else if (x$family == "surv-CR") {
@@ -95,7 +122,7 @@ plot.vimp <- function(x, standardize = TRUE, trim = 0, cex = 1,
         imp <- vimp.trim(imp, trim = trim, standardize = standardize)
         gg  <- mybar.vimp(rownames(imp), imp[, j], xlab, ylab)
         if (title) {
-          gg <- gg + labs(title = paste("Variable Importance: Event", events[j]))
+          gg <- gg + labs(title = paste0(title.lab, ": Event ", events[j]))
         }
       theme.vimp(gg, cex * 1, cex * .8)
       })
@@ -104,7 +131,7 @@ plot.vimp <- function(x, standardize = TRUE, trim = 0, cex = 1,
       g <- lapply(1:length(events), function(j) {
         gg  <- mybar.vimp(rownames(vmp), vmp[, j], xlab, ylab)
         if (title) {
-          gg <- gg + labs(title = paste("Variable Importance: Event", events[j]))
+          gg <- gg + labs(title = paste0(title.lab, ": Event ", events[j]))
         }
       theme.vimp(gg, cex * 1, cex * .8)
       })
@@ -121,7 +148,7 @@ plot.vimp <- function(x, standardize = TRUE, trim = 0, cex = 1,
     g <- lapply(1:length(outcomes), function(j) {
       gg  <- mybar.vimp(rownames(vmp), vmp[, j], xlab, ylab)
       if (title) {
-        gg <- gg + labs(title = outcomes[j])
+        gg <- gg + labs(title = paste0(title.lab, outcomes[j]))
       }
       theme.vimp(gg, .6 * cex)
     })
@@ -162,7 +189,8 @@ mybar.vimp <- function(nms, vmp, xlab, ylab) {
 
   df <- data.frame(variable = nms, importance = vmp)
   df$color <- factor(ifelse(df$importance > 0, gg.color2(6), gg.color2(1)))
-  ggplot(df, aes(x = reorder(variable, importance), y = importance, fill = color)) +
+  ggplot(df, aes(x = reorder(!!sym("variable"), !!sym("importance"), decreasing=TRUE),
+                 y = !!sym("importance"), fill = !!sym("color"))) +
     geom_bar(stat = "identity") + coord_flip() + theme_minimal() +
     labs(x = ylab, y = xlab) +
     theme(legend.position = "none")
@@ -177,8 +205,8 @@ mybar.vimp <- function(nms, vmp, xlab, ylab) {
 
 ## declutter vimp plot to specified trim (quantile) value
 vimp.trim <- function(vmp, trim, standardize = TRUE) {
-  q <- quantile(vmp, trim)
-  pt <- apply(vmp, 1, function(x){all(abs(x) >= q)})
+  q <- quantile(vmp, trim, na.rm = TRUE)
+  pt <- apply(vmp, 1, function(x){all(abs(na.omit(x)) >= q)})
   vmp <- vmp[pt,, drop = FALSE]
   if (nrow(vmp) == 0) {
     stop("trim is set too high, no variables meet that cutoff")

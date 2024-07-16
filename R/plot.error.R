@@ -8,7 +8,7 @@
 #' @export
 
 plot.error <- function(x, standardize = TRUE, xlab = "Number of Trees",
-                       ylab = "Error Rate", title = TRUE, show.plots = TRUE)
+                       ylab = "Error Rate", title = TRUE, show.plots = TRUE, ...)
 
 {
 
@@ -24,18 +24,18 @@ plot.error <- function(x, standardize = TRUE, xlab = "Number of Trees",
   
   ## family specific processing
   if (x$family == "regr" | x$family == "surv") {
-    error <- data.frame(trees = 1:x$ntree, error = x$err.rate)
+    df <- data.frame(trees = 1:x$ntree, error = x$err.rate)
   }
   else if (x$family == "class") {
-    error <- data.frame(trees = 1:x$ntree, x$err.rate)
-    colnames(error)[-1] <- c("all", levels(x$yvar))
+    df <- data.frame(trees = 1:x$ntree, x$err.rate)
+    colnames(df)[-1] <- c("all", levels(x$yvar))
   }
   else if (x$family == "surv-CR") {
-    error <- data.frame(trees = 1:x$ntree, x$err.rate)
-    colnames(error)[-1] <- x$event.info$event.type
+    df <- data.frame(trees = 1:x$ntree, x$err.rate)
+    colnames(df)[-1] <- x$event.info$event.type
   }
   else if (x$family == "regr+" | x$family == "class+" | x$family == "mix+") {
-    error <- data.frame(do.call(cbind,
+    df <- data.frame(do.call(cbind,
        lapply(x$yvar.names, function(outcome.target) {
          o <- randomForestSRC:::coerce.multivariate(x, outcome.target)
          err <- cbind(o$err.rate)[, 1]
@@ -44,8 +44,8 @@ plot.error <- function(x, standardize = TRUE, xlab = "Number of Trees",
          }
          err
        })))
-    colnames(error) <- x$yvar.names
-    error <- data.frame(trees = 1:x$ntree, error)
+    colnames(df) <- x$yvar.names
+    df <- data.frame(trees = 1:x$ntree, df)
   }
   else {
     stop("the supplied example is not a supported family")
@@ -53,24 +53,25 @@ plot.error <- function(x, standardize = TRUE, xlab = "Number of Trees",
 
   ## long format
   if (!(x$family == "regr" | x$family == "surv")) {
-    error <- reshape(error,
-                     varying = list(colnames(error)[-1]),
+    df <- reshape(df,
+                     varying = list(colnames(df)[-1]),
                      v.names = "value", 
                      timevar = "variable", 
-                     times = colnames(error)[-1],
+                     times = colnames(df)[-1],
                      direction = "long")
-    rownames(error) <- NULL
+    rownames(df) <- NULL
   }
   
   
   # Create ggplot for error rate
   if (x$family == "regr" | x$family == "surv") {
-     g <- ggplot(error, aes(x = trees, y = error)) +
+     g <- ggplot(df, aes(x = !!sym("trees"), y = !!sym("error"))) +
        geom_step(color = "#F8766D", linewidth = 1) + theme_minimal() +
        labs(x = xlab, y = ylab) 
   }
   else {
-    g <- ggplot(error, aes(x = trees, y = value, color = variable, group = variable)) +
+    g <- ggplot(df, aes(x = !!sym("trees"), y = !!sym("value"),
+                        color = !!sym("variable"), group = !!sym("variable"))) +
       geom_step(linewidth = 1) + theme_minimal() + labs(x = xlab, y = ylab)
   }
   
@@ -83,12 +84,12 @@ plot.error <- function(x, standardize = TRUE, xlab = "Number of Trees",
       g <- theme.error.legend(g, 1, 1.5, 1)
     }
     else {
-      error <- theme.error.legend(g)
+      g <- theme.error.legend(g)
     }
   }
   else if (x$family == "surv-CR") {
     g <- theme.error.legend(g, 1, 2)
-    g <- theme.error.legend.adjust(g, error)
+    g <- theme.error.legend.adjust(g, df)
   }
   else {
     g <- theme.error.legend(g)

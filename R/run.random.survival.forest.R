@@ -72,9 +72,9 @@ run_random_survival_forest <- function(formula, data, ntree = 100, nodesize = 15
     average_surv_df <- data.frame(time = time, survival = average_survival, id = nrow(surv)+1)
 
     # Create ggplot for survival curves
-    survival_plot <- ggplot(surv_df, aes(x = time, y = survival, group = id)) +
+    survival_plot <- ggplot(surv_df, aes(x = surv_df$time, y = surv_df$survival, group = surv_df$id)) +
       geom_step(alpha = 1, linewidth = 0.25, color = gray(.55)) +
-      geom_step(data = average_surv_df, aes(x = time, y = survival, group = id), color = "#F8766D", size = 1) +
+      geom_step(data = average_surv_df, aes(x = average_surv_df$time, y = average_surv_df$survival, group = average_surv_df$id), color = "#F8766D", size = 1) +
       labs(title = "Survival Curves for All Data Points", x = "Time", y = "Survival Probability") +
       theme_minimal()
 
@@ -100,17 +100,6 @@ run_random_survival_forest <- function(formula, data, ntree = 100, nodesize = 15
   }
 
 }
-
-# Example usage:
-#example.survival <- function() {
-  
-#  data(pbc, package = "randomForestSRC")
-#  run_random_survival_forest(Surv(days, status) ~ ., pbc)
-
-#  data(veteran, package = "randomForestSRC")
-#  run_random_survival_forest(Surv(time, status) ~ ., veteran)
-
-#}
 
 run.random.survival.forest <- run_random_survival_forest
 

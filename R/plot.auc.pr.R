@@ -8,7 +8,7 @@
 #' 
 #' @export
 
-plot.auc.pr <- function(x, multiplier1 = 0.5, multiplier2 = 0.5, show.plots = TRUE) {
+plot.auc.pr <- function(x, multiplier1 = 0.5, multiplier2 = 0.5, show.plots = TRUE, ...) {
 
   ## coherence check
   if (sum(inherits(x, c("rfsrc", "grow"), TRUE) == c(1, 2)) != 2) {
@@ -71,10 +71,11 @@ plot.auc.pr <- function(x, multiplier1 = 0.5, multiplier2 = 0.5, show.plots = TR
 
   # Plot PR curves
   if (J == 2) {
-    pr_plot <- suppressWarnings({ggplot(pr_data, aes(x = recall, y = precision)) +
+    auc <- round(mean(pr_data$auc), 2)
+    pr_plot <- suppressWarnings({ggplot(pr_data, aes(x = !!sym("recall"), y = !!sym("precision"))) +
       geom_line(color = "blue") +
       geom_area(fill = "grey", alpha = 0.2) +
-      ggtitle(paste("Precision-Recall Curve for Binary Classification\nAUC =", round(mean(pr_data$auc), 2))) +
+      ggtitle(paste("Precision-Recall Curve for Binary Classification\nAUC =", auc)) + 
       xlab("Recall") +
       ylab("Precision") +
       theme_minimal() +
@@ -90,7 +91,7 @@ plot.auc.pr <- function(x, multiplier1 = 0.5, multiplier2 = 0.5, show.plots = TR
         axis.ticks = element_blank()
       )})
   } else {
-    pr_plot <- suppressWarnings({ggplot(pr_data, aes(x = recall, y = precision, fill = class)) +
+    pr_plot <- suppressWarnings({ggplot(pr_data, aes(x = !!sym("recall"), y = !!sym("precision"), fill = !!sym("class"))) +
       geom_line() +
       geom_area(alpha = 0.2, position = 'identity') +
       ggtitle("Precision-Recall Curves for Multi-Class Classification") +
@@ -116,11 +117,12 @@ plot.auc.pr <- function(x, multiplier1 = 0.5, multiplier2 = 0.5, show.plots = TR
   
   # Plot ROC curves
   if (J == 2) {
-    roc_plot <- suppressWarnings({ggplot(roc_data, aes(x = fpr, y = tpr)) +
+    auc <- round(mean(roc_data$auc), 2)
+    roc_plot <- suppressWarnings({ggplot(roc_data, aes(x = !!sym("fpr"), y = !!sym("tpr"))) +
       geom_line(color = "blue") +
       geom_area(fill = "grey", alpha = 0.2) +
       geom_abline(linetype = "dashed") +
-      ggtitle(paste("ROC Curve for Binary Classification\nAUC =", round(mean(roc_data$auc), 2))) +
+      ggtitle(paste("ROC Curve for Binary Classification\nAUC =", auc)) +
       xlab("False Positive Rate (1 - Specificity)") +
       ylab("True Positive Rate (Sensitivity)") +
       theme_minimal() +
@@ -136,7 +138,7 @@ plot.auc.pr <- function(x, multiplier1 = 0.5, multiplier2 = 0.5, show.plots = TR
         axis.ticks = element_blank()
       )})
   } else {
-    roc_plot <- suppressWarnings({ggplot(roc_data, aes(x = fpr, y = tpr, fill = class)) +
+    roc_plot <- suppressWarnings({ggplot(roc_data, aes(x = !!sym("fpr"), y = !!sym("tpr"), fill = !!sym("class"))) +
       geom_line() +
       geom_area(alpha = 0.2, position = 'identity') +
       geom_abline(linetype = "dashed") +

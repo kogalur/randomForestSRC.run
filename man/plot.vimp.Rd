@@ -2,7 +2,7 @@
 \alias{plot.vimp}
 \title{Plot variable importance (VIMP) for rfsrc object.}
 \usage{\method{plot}{vimp}(x, standardize = TRUE, trim = 0, cex = 1,
-          xlab = "Importance", ylab = "", title = TRUE, show.plots = TRUE)}
+      xlab = "Importance", ylab = "", title = TRUE, show.plots = TRUE, ...)}
 \arguments{
 \item{x}{rfsrc object (classification).}
 \item{standardize}{Use standardized VIMP?}
@@ -11,6 +11,8 @@
 \item{xlab}{Label for x-axis.}
 \item{ylab}{Label for y-axis.}
 \item{title}{Include a title?}
+\item{show.plots}{Should plots be displayed?}
+\item{...}{Additional options.}
 }
 \description{
 

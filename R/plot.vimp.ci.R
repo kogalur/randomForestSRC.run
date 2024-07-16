@@ -11,7 +11,8 @@
 
 plot.vimp.ci <- function(x, standardize = TRUE, alpha = .01,
     trim = 0, cex = 1, size = 2, width = .5,
-    show.plots = TRUE, sorted = TRUE, ...) {
+    show.plots = TRUE, sorted = TRUE,
+    xlab = "Variable Importance", ...) {
 
 
   ## coherence check
@@ -51,29 +52,37 @@ plot.vimp.ci <- function(x, standardize = TRUE, alpha = .01,
   ## family specific processing
   if (family == "regr" | family == "surv") {
     g <- mybxp.vimp(plot.subsample(x, xvar.names = xvar.names, alpha = alpha, show.plots = FALSE),
-                  size = size, width = width, sorted = sorted)
+                  size = size, width = width, sorted = sorted, lab = xlab)
     g <- theme.vimp.ci(g, cex * 1)
   }
   else if (family == "class") {
-    vmp <- x$vmp[[1]]
-    J <- ncol(vmp) -1
-    g <- lapply(1:ncol(vmp), function(j) {
-      gg <- mybxp.vimp(plot.subsample(x, target = j - 1, xvar.names = xvar.names,
-                                    alpha = alpha, show.plots = FALSE),
-                     size = size, width = width, sorted = sorted,
-                     lab = paste("Variable Importance:", colnames(vmp)[j]))
+    rfq <- x$rf$forest$rfq
+    if (!rfq) {## standard classification
+      vmp <- x$vmp[[1]]
+      J <- ncol(vmp) -1
+      g <- lapply(1:ncol(vmp), function(j) {
+        gg <- mybxp.vimp(plot.subsample(x, target = j - 1, xvar.names = xvar.names,
+                                        alpha = alpha, show.plots = FALSE),
+                         size = size, width = width, sorted = sorted,
+                         lab = paste0(xlab, ": ", colnames(vmp)[j]))
+        if (J < 5) {
+          theme.vimp.ci(gg, cex * 1)
+        }
+        else {
+          theme.vimp.ci(gg, cex * .6)
+        }
+      })
       if (J < 5) {
-        theme.vimp.ci(gg, cex * 1)
+        g <- wrap_plots(g, ncol = length(g))
       }
       else {
-        theme.vimp.ci(gg, cex * .6)
+        g <- wrap_plots(g, ncol = min(length(g), 4))
       }
-    })
-    if (J < 5) {
-      g <- wrap_plots(g, ncol = length(g))
     }
-    else {
-      g <- wrap_plots(g, ncol = min(length(g), 4))
+    else {#class imbalanced
+      g <- mybxp.vimp(plot.subsample(x, xvar.names = xvar.names, alpha = alpha, show.plots = FALSE),
+                      size = size, width = width, sorted = sorted, lab = xlab)
+      g <- theme.vimp.ci(g, cex * 1)
     }
   }
   else if (family == "surv-CR") {
@@ -93,7 +102,7 @@ plot.vimp.ci <- function(x, standardize = TRUE, alpha = .01,
         gg <- mybxp.vimp(plot.subsample(xx, target = j, xvar.names = xvar.names,
                                       alpha = alpha, show.plots = FALSE),
                        size = size, width = width, sorted = sorted,
-                       lab = paste("Variable Importance: Event", events[j]))
+                       lab = paste0(xlab, ": Event ", events[j]))
         theme.vimp.ci(gg, cex * 1, cex * .8)
       })
     }
@@ -103,7 +112,7 @@ plot.vimp.ci <- function(x, standardize = TRUE, alpha = .01,
         gg <- mybxp.vimp(plot.subsample(x, target = j, xvar.names = xvar.names,
                                       alpha = alpha, show.plots = FALSE),
                        size = size, width = width, sorted = sorted,
-                       lab = paste("Variable Importance: Event", events[j]))
+                       lab = paste0(xlab, ": Event ", events[j]))
         theme.vimp.ci(gg, cex * 1, cex * .8)
       })
     }
@@ -120,7 +129,7 @@ plot.vimp.ci <- function(x, standardize = TRUE, alpha = .01,
       gg <- mybxp.vimp(plot.subsample(x, m.target = outcomes[j], xvar.names = xvar.names,
                                     alpha = alpha, show.plots = FALSE),
                      size = size, width = width, sorted = sorted,
-                     lab = paste("Variable Importance:",  outcomes[j]))
+                     lab = paste(xlab, ": ", outcomes[j]))
       theme.vimp.ci(gg, .6 * cex)
     })
     g <- wrap_plots(g, ncol = min(length(g), 4))
@@ -173,14 +182,14 @@ mybxp.vimp <- function(o, sorted = TRUE, size = 2, width = .5, lab = "Variable I
   }
 
   # Create a ggplot boxplot using the extracted data  
-  ggplot(df, aes(x = group, color = color, fill = color)) +
+  ggplot(df, aes(x = !!sym("group"), color = !!sym("color"), fill = !!sym("color"))) +
     geom_boxplot(aes(
-      ymin = lower,
-      lower = Q1,
-      middle = median,
-      upper = Q3,
-      ymax = upper,
-      group = group
+      ymin = !!sym("lower"),
+      lower = !!sym("Q1"),
+      middle = !!sym("median"),
+      upper = !!sym("Q3"),
+      ymax = !!sym("upper"),
+      group = !!sym("group")
     ), stat = "identity", colour = "black", size = width) +
     geom_point(aes(y = median), color = "black", size = size, shape = 23, fill = "yellow") +
     labs(y = lab, x = "") +

@@ -6,8 +6,7 @@
 
 plot.tune.nodesize <- function(result, multiplier = 1,
             xlab = "Nodesize", ylab = "Error Rate", title = TRUE) {
-  ## build the plot
-  g <- ggplot(result$err, aes(x = nodesize, y = err)) +
+  g <- ggplot(result$err, aes(x = !!sym("nodesize"), y = !!sym("err"))) +
     geom_point() + geom_smooth(method = "loess", se = TRUE) +  
     labs(x = xlab, y = ylab) + theme_minimal() 
   g <- theme.error(g, multiplier)

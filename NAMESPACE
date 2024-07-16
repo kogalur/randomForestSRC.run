@@ -1,6 +1,6 @@
-#importFrom("randomForestSRC", "rfsrc", "tune.nodesize", "quantreg", "get.quantile")
-#importFrom("randomForestSRC", "get.quantile.crps", "max.subtree", "get.mv.formula")
-#importFrom("randomForestSRC", "get.mv.vimp")
+importFrom("randomForestSRC", "rfsrc", "tune.nodesize", "quantreg", "get.quantile")
+importFrom("randomForestSRC", "get.quantile.crps", "max.subtree", "get.mv.formula")
+importFrom("randomForestSRC", "vimp", "get.mv.vimp", "subsample", "plot.subsample")
 importFrom("ggplot2", "ggplot", "aes", "geom_step", "labs", "theme_minimal")
 importFrom("ggplot2", "geom_bar", "coord_flip", "geom_point", "geom_errorbar", "geom_smooth")
 importFrom("ggplot2", "geom_abline", "geom_line", "theme", "element_blank")
@@ -12,17 +12,15 @@ importFrom("cowplot", "ggdraw", "draw_plot", "draw_grob")
 importFrom("grid", "rectGrob", "gpar")
 importFrom("gridExtra", "arrangeGrob", "grid.arrange")
 importFrom("riskRegression", "Score")
-importFrom("rlang", "new_formula", "f_lhs")
+importFrom("rlang", "new_formula", "f_lhs", "sym", "!!")
 importFrom("survival", "Surv")
-
+importFrom("grDevices", "gray", "hcl")
+importFrom("stats", "formula", "median", "na.omit", "predict",
+           "quantile", "reorder", "reshape", "time", "var")
+importFrom("grDevices", "hcl")
 import("patchwork")
 
 export(run.rfsrc,
-       #run.random.class.forest,
-       #run.random.cr.forest,
-       #run.random.mv.forest,
-       #run.random.regression.forest,
-       #run.random.survival.forest,
        plot.auc.pr,
        plot.brier.auc,
        plot.cif,

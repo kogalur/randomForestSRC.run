@@ -21,7 +21,7 @@
 \item{show.plots}{Should plots be displayed?}
 
 \item{...}{Additional options passed to helper functions (alpha, trim,
-  cex, size, width, sorted).}
+  cex, size, width, sorted, prbL = 0.25, prbU = 0.75).}
 }
 \value{
 A single plot describing the results of the rfsrc analysis.

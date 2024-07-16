@@ -77,23 +77,4 @@ run_random_class_forest <- function(formula, data, ntree = 100, nodesize = 1, ..
 
 }
 
-# Example usage:
-#example.class <- function() {
-
-#  data(breast, package = "randomForestSRC")
-#  breast <- na.omit(breast)
-#  breast$status <- factor(breast$status, labels=c("normal", "recurrent"))
-#  run_random_class_forest(status ~ ., breast)
-
-#  library(mlbench)
-#  data(Glass, package = "mlbench")
-#  run_random_class_forest(Type ~ ., Glass)
-
-#  library(mlbench)
-#  data(Soybean, package = "mlbench")
-#  run_random_class_forest(Class ~ ., Soybean)
-
-  
-#}
-
 run.random.class.forest <- run_random_class_forest

@@ -1,12 +1,15 @@
 Package: randomForestSRC.run
-Title: Run RandomForestSRC 
 Version: 0.0.2
+Date: 2024-07-15
+Title: Run RandomForestSRC 
 Author: Hemant Ishwaran <hemant.ishwaran@gmail.com>, Min Lu <m.lu6@umiami.edu>
-Description: What the package does (one paragraph).
+Maintainer: Udaya B. Kogalur <ubk@kogalur.com>
+Depends: R (>= 4.3.0), randomForestSRC (>= 3.3.0)
+Imports: rlang, riskRegression, ggplot2, survival, cowplot, patchwork, grid, gridExtra, pROC, PRROC
+Suggests: mlbench
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
-Imports: randomForestSRC, rlang, riskRegression, ggplot2, survival, gridExtra, cowplot, patchwork, tidyverse, grid, gridExtra, pROC, PRROC
-Suggests: mlbench
+Description: Runs rfsrc on a user's specified data and performs a detailed analysis.
 License: GPL (>=3)
 URL: https://www.randomforestsrc.org/ https://ishwaran.org/

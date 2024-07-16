@@ -3,13 +3,14 @@
 \name{plot.brier.auc}
 \alias{plot.brier.auc}
 \title{Plot Brier Score and time-dependent AUC.}
-\usage{\method{plot}{brier.auc}(o, loo = 25, show.plots = TRUE)}
+\usage{\method{plot}{brier.auc}(x, loo = 25, show.plots = TRUE, ...)}
 \arguments{
 \item{x}{rfsrc object (survival).}
 \item{loo}{Number of monte carlo sets used for the leave-one-out (loo)
   bootstrap used for Brier and time dependent AUC standard errors. Only
   applies to survival.}
 \item{show.plots}{Should plots be displayed?}
+\item{...}{Additional options.}
 }
 \description{
 Brier score and time-dependent AUC for a rfsrc (survival) object.

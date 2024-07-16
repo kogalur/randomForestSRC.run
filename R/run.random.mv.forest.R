@@ -44,7 +44,7 @@ run_random_mv_forest <- function(formula, data, ntree = 100,
 
   
   # Create ggplot for minimal depth of tuned model
-  minimal_depth_plot_tuned <- ggplot(md_tuned_df, aes(x = reorder(variable, depth), y = depth)) +
+  minimal_depth_plot_tuned <- ggplot(md_tuned_df, aes(x = reorder(md_tuned_df$variable, md_tuned_df$depth), y = md_tuned_df$depth)) +
     geom_bar(stat = "identity", fill = "#F8766D") +
     coord_flip() +
     labs(title = "Minimal Depth", x = "Variable", y = "Minimal Depth") + theme_minimal()
@@ -75,24 +75,5 @@ run_random_mv_forest <- function(formula, data, ntree = 100,
   }
 
 }
-
-# Example usage:
-#example.mv <- function() {
-#  data(nutrigenomic, package = "randomForestSRC")
-
-  # regr+
-#  f <- get.mv.formula(colnames(nutrigenomic$lipids))
-#  d <- data.frame(do.call(cbind, nutrigenomic))
-#  run_random_mv_forest(f, d)
-
-  # mix+
-#  ydta <- data.frame(diet = nutrigenomic$diet,
-#                   genotype = nutrigenomic$genotype,
-#                   nutrigenomic$lipids)
-#  f <- get.mv.formula(colnames(ydta))
-#  d <- data.frame(ydta, nutrigenomic$genes)
-#  run_random_mv_forest(f, d)
-  
-#}
 
 run.random.mv.forest <- run_random_mv_forest

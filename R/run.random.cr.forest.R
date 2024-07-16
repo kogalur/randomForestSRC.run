@@ -41,7 +41,7 @@ run_random_cr_forest <- function(formula, data, ntree = 100, nodesize = 15, ...)
   md_tuned_df <- data.frame(variable = rownames(md_tuned), depth = md_tuned[,1])
   
   # Create ggplot for minimal depth of tuned model
-  minimal_depth_plot_tuned <- ggplot(md_tuned_df, aes(x = reorder(variable, depth), y = depth)) +
+  minimal_depth_plot_tuned <- ggplot(md_tuned_df, aes(x = reorder(md_tuned_df$variable, md_tuned_df$depth), y = md_tuned_df$depth)) +
     geom_bar(stat = "identity", fill = "#F8766D") +
     coord_flip() +
     labs(title = "Minimal Depth", x = "Variable", y = "Minimal Depth") + theme_minimal()
@@ -81,13 +81,6 @@ run_random_cr_forest <- function(formula, data, ntree = 100, nodesize = 15, ...)
   }
 
 }
-
-# Example usage:
-#example.cr <- function() {
-#  data(pbc, package = "survival")
-#  pbc$id <- NULL
-# run_random_cr_forest(Surv(time, status) ~ ., data = pbc)
-#}
 
 run.random.cr.forest <- run_random_cr_forest
 

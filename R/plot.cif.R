@@ -2,7 +2,7 @@
 #'
 #' @export
 
-plot.cif <- function(x, show.plots = TRUE) {
+plot.cif <- function(x, show.plots = TRUE, ...) {
 
   ## coherence check
   if (sum(inherits(x, c("rfsrc", "grow"), TRUE) == c(1, 2)) != 2) {
@@ -24,7 +24,7 @@ plot.cif <- function(x, show.plots = TRUE) {
               times = colnames(cr)[-1],
               direction = "long")
   cr$variable <- gsub("\\.", " ", cr$variable)  
-  g <- ggplot(cr, aes(x = time, y = value, color = variable, group = variable)) +
+  g <- ggplot(cr, aes(x = !!sym("time"), y = !!sym("value"), color = !!sym("variable"), group = !!sym("variable"))) +
     geom_step(linewidth = 1) + theme_minimal() +
     labs(x = "Time", y = "Probability")
   g <- theme.cr.legend(g, 1, 2)

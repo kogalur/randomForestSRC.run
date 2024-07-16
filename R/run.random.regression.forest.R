@@ -83,7 +83,7 @@ run_random_regression_forest <- function(formula, data, ntree = 100, nodesize = 
       theme_minimal()
 
     # Create CRPS plot
-    crps_plot <- ggplot(data.frame(x = crps.dat[,1], y = crps.dat[, 2]), aes(x = x, y = y)) +
+    crps_plot <- ggplot(data.frame(x = crps.dat[,1], y = crps.dat[, 2]), aes(x = crps.dat[,1], y = crps.dat[, 2])) +
       geom_line(color = "red", size = 1) +
       theme_minimal() +
       theme(axis.title = element_blank())#, axis.text = element_blank(), axis.ticks = element_blank())
@@ -126,11 +126,5 @@ run_random_regression_forest <- function(formula, data, ntree = 100, nodesize = 
 
 }
 
-# Example usage:
-#example.regression <- function() {
-#  library(mlbench)
-#  data(BostonHousing, package="mlbench")
-#  run_random_regression_forest(medv ~ ., BostonHousing, nodesize = 1)
-#}
 
 run.random.regression.forest <- run_random_regression_forest

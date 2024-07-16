@@ -3,7 +3,7 @@
 \title{Plot confidence intervals for variable importance (VIMP) for rfsrc object.}
 \usage{\method{plot}{vimp.ci}(x, standardize = TRUE,
    alpha = .01, trim = 0, cex = 1, size = 2, width = .5,
-   show.plots = TRUE, sorted = TRUE, ...)}
+   show.plots = TRUE, sorted = TRUE, xlab = "Variable Importance", ...)}
 \arguments{
 \item{x}{rfsrc object or a rfsrc subsample object.}
 \item{standardize}{Use standardized VIMP?}
@@ -14,7 +14,7 @@
 \item{width}{Line width used in boxplot.}
 \item{show.plots}{Should plots be displayed?}
 \item{sorted}{Should variables be sorted in terms of of importance?}
-
+\item{xlab}{Label for x-axis.}
 \item{...}{Further arguments passed to the subsample function.}
 }
 \description{
