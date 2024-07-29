@@ -36,6 +36,17 @@ families.  See examples below.
 \details{
   Output values are family specific.
 }
+\seealso{
+  \command{plot.auc.pr},
+  \command{plot.brier.auc},
+  \command{plot.brier.auc},
+  \command{plot.cif},
+  \command{plot.error},
+  \command{plot.vimp},
+  \command{plot.vimp.ci}  
+}
+
+
 \examples{
 
 ## regression

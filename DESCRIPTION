@@ -1,6 +1,6 @@
 Package: randomForestSRC.run
-Version: 0.0.2
-Date: 2024-07-15
+Version: 0.0.3
+Date: 2024-07-29
 Title: Run RandomForestSRC 
 Author: Hemant Ishwaran <hemant.ishwaran@gmail.com>, Min Lu <m.lu6@umiami.edu>
 Maintainer: Udaya B. Kogalur <ubk@kogalur.com>
